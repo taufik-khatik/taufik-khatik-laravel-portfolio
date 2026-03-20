@@ -9,9 +9,17 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
-    libonig-dev \
+    libicu-dev \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip mbstring fileinfo
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    && docker-php-ext-install gd intl pdo pdo_mysql pdo_pgsql zip mbstring fileinfo
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
