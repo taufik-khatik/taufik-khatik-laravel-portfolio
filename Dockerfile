@@ -1,41 +1,37 @@
-# Use official PHP 8.3 with Apache
-FROM php:8.3-apache
+FROM php:8.2-fpm
 
-# Enable Apache rewrite
-RUN a2enmod rewrite
-
-# Install required system dependencies
+# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
+    zip \
     unzip \
     libzip-dev \
-    libicu-dev \
-    libpq-dev \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev
+
+# Configure GD
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install PHP extensions
-RUN docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg \
-    && docker-php-ext-install gd intl pdo pdo_mysql pdo_pgsql zip mbstring fileinfo
+RUN docker-php-ext-install gd pdo pdo_mysql mbstring zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy project files
-COPY . /var/www/html
-
 WORKDIR /var/www/html
 
-# Install PHP dependencies (composer install)
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+COPY . .
 
-# Fix Permissions
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-EXPOSE 80
+# Set permissions
+RUN chmod -R 777 storage bootstrap/cache
 
-# Start Apache
-CMD ["apache2-foreground"]
+EXPOSE 8080
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
