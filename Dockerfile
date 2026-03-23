@@ -32,6 +32,16 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+RUN npm install
+RUN npm run dev
+
+# Run migrations and seeders
+RUN php artisan migrate --force
+RUN php artisan db:seed --force
+
 # Clear caches and optimize Laravel
 RUN php artisan config:clear || true
 RUN php artisan cache:clear || true
