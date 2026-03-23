@@ -1,6 +1,13 @@
+# Stage 1: Composer Dependencies
+FROM composer:2 as composer_stage
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader
+
+# Stage 2: PHP + Laravel
 FROM php:8.2-fpm
 
-# System dependencies
+# System Dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -13,23 +20,21 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev
 
-# Configure GD
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-
-# Install PHP extensions
-RUN docker-php-ext-install gd pdo pdo_mysql mbstring zip
-
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# PHP Extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql mbstring zip
 
 WORKDIR /var/www/html
 
+# Copy Laravel App
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Copy Vendor
+COPY --from=composer_stage /app/vendor ./vendor
 
-# Set permissions
+# Permissions
 RUN chmod -R 777 storage bootstrap/cache
 
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
+EXPOSE 9000
+
+CMD ["php-fpm"]
