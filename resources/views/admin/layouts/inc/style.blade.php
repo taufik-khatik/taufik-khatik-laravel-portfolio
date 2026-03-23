@@ -4,19 +4,6 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
     integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
-<!-- CSS Libraries -->
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/bootstrap-iconpicker.min.css"/>
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/summernote-bs4.css">
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/selectric.css">
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/bootstrap-tagsinput.css">
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/bootstrap-timepicker.min.css">
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/daterangepicker.css">
-<link rel="stylesheet" href="{{asset('assets')}}/css/plugins/select2.min.css">
-
-<!-- Template CSS -->
-<link rel="stylesheet" href="{{asset('assets')}}/css/style.css">
-<link rel="stylesheet" href="{{asset('assets')}}/css/components.css">
-
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
