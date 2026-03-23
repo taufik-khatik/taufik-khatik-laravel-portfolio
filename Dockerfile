@@ -32,11 +32,4 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
-# Run database migrations and seeders
-RUN php artisan migrate --force
-RUN php artisan db:seed
-
-# Run the application
-EXPOSE ${PORT}
-CMD php artisan serve --host=0.0.0.0 --port=${PORT}
-
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
