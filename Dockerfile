@@ -45,11 +45,5 @@ RUN php artisan optimize:clear
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
-# Run database migrations
-RUN php artisan migrate --force
-
-# Run database seeders
-RUN php artisan db:seed --force
-
 # Run Laravel application
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
