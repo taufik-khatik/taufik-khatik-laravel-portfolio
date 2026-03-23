@@ -44,13 +44,15 @@ class HomeController extends Controller
         $blogs = Blog::latest()->take(5)->get();
         $blogTitle = BlogSectionSetting::first();
         $contactTitle = ContactSectionSetting::first();
-        return view('frontend.pages.home' , compact('hero', 'typerTitles', 'services', 'serviceTitle', 'about', 'portfolioTitle', 'portfolioCategories', 'portfolioItems', 'skill', 'skillItems', 'experience', 'feedbacks', 'feedbackTitle', 'blogs', 'blogTitle', 'contactTitle' ) );
+        $quote = Quote::first();
+        return view('frontend.pages.home' , compact('hero', 'typerTitles', 'services', 'serviceTitle', 'about', 'portfolioTitle', 'portfolioCategories', 'portfolioItems', 'skill', 'skillItems', 'experience', 'feedbacks', 'feedbackTitle', 'blogs', 'blogTitle', 'contactTitle', 'quote') );
     }
 
 
     public function showPortfolio($id){
         $portfolio = PortfolioItem::findOrFail($id);
-        return view('frontend.pages.portfolio-details', compact('portfolio'));
+        $quote = Quote::first();
+        return view('frontend.pages.portfolio-details', compact('portfolio', 'quote'));
     }
 
     public function showBlog($id)
@@ -58,7 +60,8 @@ class HomeController extends Controller
         $blog = Blog::findOrFail($id);
         $previousPost = Blog::where('id', '<', $blog->id)->orderBy('id', 'desc')->first();
         $nextPost = Blog::where('id', '>', $blog->id)->orderBy('id', 'asc')->first();
-        return view('frontend.pages.blog-details', compact('blog', 'previousPost', 'nextPost'));
+        $quote = Quote::first();
+        return view('frontend.pages.blog-details', compact('blog', 'previousPost', 'nextPost', 'quote'));
     }
 
     public function blog()
