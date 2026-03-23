@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    libpq-dev
+    libpq-dev \
+    nodejs npm
 
 # Configure GD
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -27,12 +28,24 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Refresh Install Laravel dependencies
-RUN rm -rf vendor composer.lock
+# AUTLOAD HELPERS
+RUN composer dump-autoload
+
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# Install NPM dependencies & build assets
+RUN npm install
+RUN npm run build
+
+# Storage link
+RUN php artisan storage:link || true
+
+# Cache optimize
+RUN php artisan optimize:clear
 
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
 # Run Laravel application
-CMD ["sh", "-c", "php artisan optimize:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
