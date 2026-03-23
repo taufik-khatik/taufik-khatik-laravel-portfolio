@@ -32,4 +32,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
+# Clear caches and optimize Laravel
+RUN php artisan config:clear || true
+RUN php artisan cache:clear || true
+RUN php artisan view:clear || true
+RUN php artisan route:clear || true
+RUN php artisan optimize:clear || true
+RUN php artisan storage:link || true
+
 CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
