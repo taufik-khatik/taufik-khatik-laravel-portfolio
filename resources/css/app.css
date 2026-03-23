@@ -11,16 +11,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* CSS Libraries */
-@import "../../assets/css/plugins/bootstrap-iconpicker.min.css";
-@import "../../assets/css/plugins/summernote-bs4.css";
-@import "../../assets/css/plugins/selectric.css";
-@import "../../assets/css/plugins/bootstrap-tagsinput.css";
-@import "../../assets/css/plugins/bootstrap-timepicker.min.css";
-@import "../../assets/css/plugins/daterangepicker.css";
-@import "../../assets/css/plugins/select2.min.css";
-
-/* Template CSS */
-@import "../../assets/css/style.css";
-@import "../../assets/css/components.css";
