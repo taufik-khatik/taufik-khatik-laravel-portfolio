@@ -28,10 +28,10 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install Laravel dependencies
-RUN composer install --no-dev
+RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
 # Run Laravel application
-CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
+CMD ["sh", "-c", "php artisan optimize:clear && php artisan db:seed --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
