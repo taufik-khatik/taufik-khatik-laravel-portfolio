@@ -27,8 +27,8 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install Laravel dependencies and optimize autoloader
+RUN composer install --no-dev --optimize-autoloader && composer dump-autoload
 
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
