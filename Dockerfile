@@ -28,11 +28,9 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Install Laravel dependencies
+# Refresh Install Laravel dependencies
+RUN rm -rf vendor composer.lock
 RUN composer install --no-dev --optimize-autoloader
-
-# Dump autoload
-RUN composer dump-autoload
 
 # Install NPM dependencies & build assets
 RUN npm install
