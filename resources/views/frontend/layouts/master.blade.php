@@ -47,12 +47,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#skills-page">Skills</a>
                         </li>
-                        @if ($serviceTitle->is_enabled)
+                        @if ($serviceTitle?->is_enabled)
                             <li class="nav-item">
                                 <a class="nav-link" href="#service-page">Services</a>
                             </li>
                         @endif
-                        @if ($blogTitle->is_enabled)
+                        @if ($blogTitle?->is_enabled)
                             <li class="nav-item">
                                 <a class="nav-link" href="#blog-page">Blogs <i class="fas fa-angle-down"></i></a>
                                 <ul class="sub_menu">

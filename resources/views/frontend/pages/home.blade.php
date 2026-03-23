@@ -24,7 +24,7 @@
 <!-- Experience-Area-End -->
 
 <!-- Service-Area-Start -->
-@if ($serviceTitle->is_enabled)
+@if ($serviceTitle?->is_enabled)
     @include('frontend.pages.widgets.service')
 @endif
 <!-- Service-Area-End -->
@@ -34,7 +34,7 @@
 <!-- Testimonial-Area-End -->
 
 <!-- Blog-Area-Start -->
-@if ($blogTitle->is_enabled)
+@if ($blogTitle?->is_enabled)
     @include('frontend.pages.widgets.blog')
 @endif
 <!-- Blog-Area-End -->
