@@ -33,5 +33,5 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
 
-
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
+# Run Laravel application
+CMD ["sh", "-c", "php artisan optimize:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT}"]
