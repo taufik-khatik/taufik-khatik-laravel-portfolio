@@ -32,6 +32,9 @@ COPY . .
 RUN rm -rf vendor composer.lock
 RUN composer install --no-dev --optimize-autoloader
 
+# Create public directory
+RUN mkdir -p public/build
+
 # Install NPM dependencies & build assets
 RUN npm install
 RUN npm run build
