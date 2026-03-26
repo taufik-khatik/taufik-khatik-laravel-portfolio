@@ -54,6 +54,18 @@ Route::get('blog-details/{id}', [HomeController::class, 'showBlog'])->name('show
 Route::get('portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
 Route::post('contact', [HomeController::class, 'contact'])->name('contact');
 
+// Test email route
+Route::get('/test-email', function () {
+    try {
+        \Mail::raw("Mail sending test successful!", function ($msg) {
+            $msg->to(env('MAIL_FROM_ADDRESS'))->subject("Test Mail");
+        });
+        return "Mail sent to " . env('MAIL_FROM_ADDRESS') . " successfully!";
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+});
+
 
 /** Admin Routes */
 
