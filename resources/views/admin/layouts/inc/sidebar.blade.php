@@ -37,29 +37,26 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Dashboard</li>
-            <li class="nav-item active">
+            <li class="nav-item {{ setSidebarActive(['dashboard']) }}">
                 <a href="{{ route('dashboard') }}" class="nav-link">
                     <i class="fas fa-fire"></i><span>Dashboard</span>
                 </a>
             </li>
-            {{-- <li class="nav-item dropdown">
-                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i>
-                    <span>Dropdown</span></a>
-                <ul class="dropdown-menu" style="display: none;">
-                    <li><a class="nav-link" href="">Test</a></li>
-                </ul>
-            </li> --}}
 
             <li class="menu-header">Sections</li>
 
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown {{ setSidebarActive(['admin.hero.*', 'admin.typer-title.*']) }}">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
                     <i class="fas fa-columns"></i>
                     <span>Hero</span>
                 </a>
                 <ul class="dropdown-menu" style="display: none;">
-                    <li><a class="nav-link" href="{{ route('admin.hero.index') }}">Hero Banner Title</a></li>
-                    <li><a class="nav-link" href="{{ route('admin.typer-title.index') }}">Typing Title</a></li>
+                    <li class="{{ setSidebarActive(['admin.hero.*']) }}">
+                        <a class="nav-link" href="{{ route('admin.hero.index') }}">Hero Banner Title</a>
+                    </li>
+                    <li class="{{ setSidebarActive(['admin.typer-title.*']) }}">
+                        <a class="nav-link" href="{{ route('admin.typer-title.index') }}">Typing Title</a>
+                    </li>
                 </ul>
             </li>
 
@@ -77,7 +74,7 @@
                 </ul>
             </li>
 
-            <li>
+            <li class="{{ setSidebarActive(['admin.about.*']) }}">
                 <a class="nav-link" href="{{ route('admin.about.index') }}">
                     <i class="far fa-square"></i>
                     <span>About</span>
@@ -188,6 +185,13 @@
                         <a class="nav-link" href="{{ route('admin.footer-help-links.index') }}">Footer Help Links</a>
                     </li>
                 </ul>
+            </li>
+
+            <li class="{{ setSidebarActive(['admin.quote.*']) }}">
+                <a class="nav-link" href="{{ route('admin.quote.index') }}">
+                    <i class="far fa-square"></i>
+                    <span>Quote</span>
+                </a>
             </li>
 
             <li class="menu-header">Settings</li>
