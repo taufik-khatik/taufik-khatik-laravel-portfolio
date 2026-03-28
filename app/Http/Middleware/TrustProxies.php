@@ -12,17 +12,27 @@ class TrustProxies extends Middleware
      *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.
      *
      * @var int
      */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
+    protected $headers;
+
+    public function __construct()
+    {
+        // Check constant exists (Laravel version safe)
+        if (defined('Illuminate\Http\Request::HEADER_X_FORWARDED_ALL')) {
+            $this->headers = Request::HEADER_X_FORWARDED_ALL;
+        } else {
+            // Fallback: use all relevant headers (older Laravel)
+            $this->headers =
+                Request::HEADER_X_FORWARDED_FOR |
+                Request::HEADER_X_FORWARDED_HOST |
+                Request::HEADER_X_FORWARDED_PORT |
+                Request::HEADER_X_FORWARDED_PROTO;
+        }
+    }
 }
