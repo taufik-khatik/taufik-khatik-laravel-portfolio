@@ -15,6 +15,11 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     nodejs npm
 
+# Increase limits
+RUN echo "upload_max_filesize=50M" > /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Configure GD
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
