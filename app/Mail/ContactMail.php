@@ -31,7 +31,8 @@ class ContactMail extends Mailable
         return new Envelope(
             subject: $this->mailData['subject'],
             to: env('MAIL_FROM_ADDRESS'),
-            from: $this->mailData['email']
+            from: env('MAIL_FROM_ADDRESS'),
+            replyTo: [$this->mailData['email']],
         );
     }
 

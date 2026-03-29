@@ -23,6 +23,7 @@ use App\Models\FeedbackSectionSetting;
 use App\Models\PortfolioSectionSetting;
 use App\Models\ServiceSectionSetting;
 use App\Models\Quote;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -47,7 +48,6 @@ class HomeController extends Controller
         $quote = Quote::first();
         return view('frontend.pages.home' , compact('hero', 'typerTitles', 'services', 'serviceTitle', 'about', 'portfolioTitle', 'portfolioCategories', 'portfolioItems', 'skill', 'skillItems', 'experience', 'feedbacks', 'feedbackTitle', 'blogs', 'blogTitle', 'contactTitle', 'quote') );
     }
-
 
     public function showPortfolio($id){
         $portfolio = PortfolioItem::findOrFail($id);
@@ -82,16 +82,44 @@ class HomeController extends Controller
 
     public function contact(Request $request)
     {
-       $request->validate([
-            'name' => ['required', 'max:200'],
-            'subject' => ['required', 'max:300'],
-            'email' => ['required', 'email'],
-            'message' => ['required', 'max:2000'],
-       ]);
+        $request->validate([
+                'name' => ['required', 'max:200'],
+                'subject' => ['required', 'max:300'],
+                'email' => ['required', 'email'],
+                'message' => ['required', 'max:2000'],
+        ]);
 
-       Mail::send(new ContactMail($request->all()));
+        // Get visitor IP
+        $ip = $request->ip();
 
-       return response(['status' => 'success', 'message' => 'Mail Sended Successfully!']);
+        // Fetch location info
+        $location = Http::get("http://ip-api.com/json/{$ip}")->json();
 
+        $mailData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'subject' => $request->subject,
+            'message' => $request->message,
+
+            'ip' => $ip,
+            'userAgent' => $request->userAgent(),
+            'device'    => $this->detectDevice($request->userAgent()),
+            'country'   => $location['country'] ?? 'Unknown',
+            'region'    => $location['regionName'] ?? 'Unknown',
+            'city'      => $location['city'] ?? 'Unknown',
+        ];
+
+        Mail::send(new ContactMail($mailData));
+
+        return response(['status' => 'success', 'message' => 'Mail Sended Successfully!']);
+    }
+
+    private function detectDevice($ua)
+    {
+        if (preg_match('/mobile/i', $ua)) return "Mobile";
+        if (preg_match('/tablet/i', $ua)) return "Tablet";
+        if (preg_match('/iPad|Android|Touch/i', $ua)) return "Tablet";
+        if (preg_match('/Windows NT|Macintosh|Linux/i', $ua)) return "Desktop";
+        return "Unknown";
     }
 }
