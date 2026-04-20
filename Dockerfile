@@ -54,4 +54,10 @@ RUN php artisan optimize:clear
 RUN chmod -R 777 storage bootstrap/cache
 
 # Run Laravel application
-CMD ["sh", "-c", "php artisan migrate --force || true && php artisan serve --host=0.0.0.0 --port=${PORT}"]
+CMD ["sh", "-c", "\
+php artisan config:clear && \
+php artisan cache:clear && \
+php artisan config:cache && \
+php artisan migrate --force || true && \
+php artisan serve --host=0.0.0.0 --port=${PORT} \
+"]
