@@ -24,7 +24,7 @@ class CloudinaryService
     /**
      * Upload Video
      */
-    public function uploadVideo(UploadedFile $file, string $folder = 'uploads/videos')
+    public function uploadVideo(UploadedFile $file, string $folder = 'uploads')
     {
         return Cloudinary::uploadVideo(
             $file->getRealPath(),
