@@ -63,7 +63,7 @@ class AboutController extends Controller
 
         $about = About::first();
         $imagePath = handleUpload('image', $about);
-        $resumePath = handleUpload('resume', $about);
+        $resumePath = handleUpload('resume', $about, 'uploads', 'raw');
 
         About::updateOrCreate(
             ['id' => $id],
