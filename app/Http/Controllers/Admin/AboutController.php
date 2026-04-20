@@ -83,7 +83,18 @@ class AboutController extends Controller
     public function resumeDownload()
     {
         $about = About::first();
-        return response()->download(public_path($about->resume));
+
+        if (!$about || !$about->resume) {
+            toastr()->error('Resume not found', 'Error');
+            return redirect()->back();
+        }
+
+        $fileUrl = $about->resume;
+
+        // Force download using headers
+        return response()->streamDownload(function () use ($fileUrl) {
+            echo file_get_contents($fileUrl);
+        }, 'taufik-khatik-resume.pdf');
     }
 
     /**
