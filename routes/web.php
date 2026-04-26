@@ -45,6 +45,8 @@ use App\Http\Controllers\Admin\QuoteController;
 /** Frontend Routes */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('resume/download', [HomeController::class, 'resumeDownload'])->name('resume.download');
+
 Route::get('portfolio-details/{id}', [HomeController::class, 'showPortfolio'])->name('show.portfolio');
 
 Route::get('blogs', [HomeController::class, 'blog'])->name('blog');
@@ -91,7 +93,6 @@ Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin', 'as' =>
     Route::resource('service-section-setting', ServiceSectionSettingController::class);
 
     /** About Route */
-    Route::get('resume/download', [AboutController::class, 'resumeDownload'])->name('resume.download');
     Route::resource('about', AboutController::class);
 
     /** Portfolio Category Route */

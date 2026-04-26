@@ -24,6 +24,7 @@ use App\Models\PortfolioSectionSetting;
 use App\Models\ServiceSectionSetting;
 use App\Models\Quote;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -47,6 +48,43 @@ class HomeController extends Controller
         $contactTitle = ContactSectionSetting::first();
         $quote = Quote::first();
         return view('frontend.pages.home' , compact('hero', 'typerTitles', 'services', 'serviceTitle', 'about', 'portfolioTitle', 'portfolioCategories', 'portfolioItems', 'skill', 'skillItems', 'experience', 'feedbacks', 'feedbackTitle', 'blogs', 'blogTitle', 'contactTitle', 'quote') );
+    }
+
+    public function resumeDownload()
+    {
+        $about = About::first();
+
+        if (!$about || !$about->resume) {
+            toastr()->error('Resume not found', 'Error');
+            return redirect()->back();
+        }
+
+        $fileUrl = $about->resume;
+
+        // Generate filename dynamically
+        $fileName = date('d_m_Y') . '_Taufik_Khatik_Resume.' . pathinfo($fileUrl, PATHINFO_EXTENSION);
+
+        // CASE 1: External URL (Cloudinary, S3, etc.)
+        if (Str::startsWith($fileUrl, ['http://', 'https://'])) {
+
+            return response()->streamDownload(function () use ($fileUrl) {
+                $stream = fopen($fileUrl, 'r');
+                if ($stream) {
+                    fpassthru($stream);
+                    fclose($stream);
+                }
+            }, $fileName);
+        }
+
+        // CASE 2: Local file (/uploads/...)
+        $filePath = public_path($fileUrl);
+
+        if (!file_exists($filePath)) {
+            toastr()->error('File not found on server', 'Error');
+            return redirect()->back();
+        }
+
+        return response()->download($filePath, $fileName);
     }
 
     public function showPortfolio($id){
