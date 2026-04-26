@@ -157,4 +157,20 @@ Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin', 'as' =>
 
     /** Seo setting Route */
     Route::resource('seo-setting', SeoSettingController::class);
+
+    // Test database health route
+    Route::get('/test-database', function () {
+        try {
+            \DB::connection()->getPdo();
+            \DB::select('SELECT 1');
+            return response()->json([
+                'database_connection' => 'successful',
+                'database_name' => \DB::connection()->getDatabaseName(),
+                'database_health' => 'ok',
+                'status' => 'ok',
+            ]);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    });
 });
