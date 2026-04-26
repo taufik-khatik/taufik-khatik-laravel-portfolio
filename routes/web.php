@@ -56,21 +56,8 @@ Route::get('blog-details/{id}', [HomeController::class, 'showBlog'])->name('show
 Route::get('portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
 Route::post('contact', [HomeController::class, 'contact'])->name('contact');
 
-// Test email route
-Route::get('/test-email', function () {
-    try {
-        \Mail::raw("Mail sending test successful!", function ($msg) {
-            $msg->to(env('MAIL_FROM_ADDRESS'))->subject("Test Mail");
-        });
-        return "Mail sent to " . env('MAIL_FROM_ADDRESS') . " successfully!";
-    } catch (\Exception $e) {
-        return $e->getMessage();
-    }
-});
-
 
 /** Admin Routes */
-
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -157,6 +144,18 @@ Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin', 'as' =>
 
     /** Seo setting Route */
     Route::resource('seo-setting', SeoSettingController::class);
+
+    // Test email route
+    Route::get('/test-email', function () {
+        try {
+            \Mail::raw("Mail sending test successful!", function ($msg) {
+                $msg->to(env('MAIL_FROM_ADDRESS'))->subject("Test Mail");
+            });
+            return "Mail sent to " . env('MAIL_FROM_ADDRESS') . " successfully!";
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    });
 
     // Test database health route
     Route::get('/test-database', function () {
