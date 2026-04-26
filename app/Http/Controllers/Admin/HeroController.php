@@ -79,18 +79,7 @@ class HeroController extends Controller
         ]);
 
         $hero = Hero::first();
-
-        if($request->hasFile('image')){
-            if($hero && File::exists(public_path($hero->image))) {
-                File::delete(public_path($hero->image));
-            }
-
-            $image = $request->file('image');
-            $imageName = rand().$image->getClientOriginalName();
-            $image->move(public_path('/uploads'), $imageName);
-
-            $imagePath = "/uploads/".$imageName;
-        }
+        $imagePath = handleUpload('image', $hero);
 
         Hero::updateOrCreate(
             ['id' => $id],
@@ -99,7 +88,7 @@ class HeroController extends Controller
                 'sub_title' => $request->sub_title,
                 'btn_text' => $request->btn_text,
                 'btn_url' => $request->btn_url,
-                'image' => isset($imagePath) ? $imagePath : $hero->image,
+                'image' => (!empty($imagePath) ? $imagePath : $hero->image)
             ]
         );
 
