@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('seo_settings', function (Blueprint $table) {
             // page type (home, portfolio, portfolio-details, blogs, blog-details)
-            $table->string('page_slug')->unique()->after('id');
+            $table->string('page_slug')->nullable()->unique()->after('id');
 
             // OG tags
             $table->boolean('og_enabled')->default(false);

@@ -115,3 +115,11 @@ if (!function_exists('setSidebarActive')) {
         }
     }
 }
+
+/** Get Seo Setting */
+if (!function_exists('seo')) {
+    function seo($pageSlug = 'home')
+    {
+        return \App\Models\SeoSetting::where('page_slug', $pageSlug)?->first();
+    }
+}
