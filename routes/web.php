@@ -56,6 +56,23 @@ Route::get('blog-details/{id}', [HomeController::class, 'showBlog'])->name('show
 Route::get('portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
 Route::post('contact', [HomeController::class, 'contact'])->name('contact');
 
+/** Sitemap Route */
+Route::get('/sitemap.xml', function () {
+    $pages = \App\Models\SeoSetting::all();
+    return response()->view('frontend.pages.sitemap', compact('pages'))
+        ->header('Content-Type', 'text/xml');
+});
+
+/** Robots Route */
+Route::get('/robots.txt', function () {
+    return response("
+        User-agent: *
+        Allow: /
+
+        Sitemap: " . url('/sitemap.xml')
+    )->header('Content-Type', 'text/plain');
+});
+
 
 /** Admin Routes */
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

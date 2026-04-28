@@ -1,6 +1,6 @@
 @php
+    $seo = seo(Route::currentRouteName());
     $generalSetting = \App\Models\GeneralSetting::first();
-    $seoSetting = \App\Models\SeoSetting::first();
 @endphp
 <!doctype html>
 <html class="no-js" lang="en">
@@ -9,7 +9,46 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Portfolio | @yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <title>
+        @if($seo?->title)
+            {{ $seo->title }}
+        @else
+            Portfolio | @yield('title')
+        @endif
+    </title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{ @$seo?->description }}">
+    <meta name="keywords" content="{{ @$seo?->keywords }}">
+    <meta name="author" content="Taufik Khatik">
+
+    <!-- Open Graph (OG) Tags -->
+    @if($seo?->og_enabled)
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $seo?->og_title }}">
+    <meta property="og:description" content="{{ $seo?->og_description }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset($seo?->og_image) }}">
+    @endif
+
+    <!-- Twitter Card -->
+    @if($seo?->twitter_enabled)
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seo?->twitter_title }}">
+    <meta name="twitter:description" content="{{ $seo?->twitter_description }}">
+    <meta name="twitter:image" content="{{ asset($seo?->twitter_image) }}">
+    @endif
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ $seo?->canonical_url }}">
+
+    <!-- Robots -->
+    <meta name="robots" content="{{ $seo?->robots ?? 'noindex,nofollow' }}">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/ico" href="{{asset($generalSetting?->favicon)}}"/>
+
     <!-- Include CSS Stylesheet -->
     @include('frontend.layouts.inc.style')
 </head>
