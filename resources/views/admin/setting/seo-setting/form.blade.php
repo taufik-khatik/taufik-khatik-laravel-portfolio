@@ -157,6 +157,87 @@
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-12 col-md-8 offset-md-3">
+        <button type="submit" class="btn btn-primary btn-lg me-2">
+            <i class="fas fa-save"></i> Save Settings
+        </button>
+        <button type="button" id="preview-btn" class="btn btn-info btn-lg">
+            <i class="fas fa-eye"></i> Preview & Validate SEO Settings
+        </button>
+    </div>
+</div>
+
+<!-- Preview Section -->
+<div id="preview-section" style="display: none;">
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="btn-group" role="group" aria-label="Preview tabs">
+                <button type="button" class="btn btn-outline-secondary active" id="preview-tab-seo">SEO</button>
+                <button type="button" class="btn btn-outline-secondary" id="preview-tab-og">OG</button>
+                <button type="button" class="btn btn-outline-secondary" id="preview-tab-twitter">Twitter</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- SEO Preview Panel -->
+        <div class="col-12 mb-4 preview-panel" data-preview="seo">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0"><i class="fab fa-google"></i> Search Engine Preview</h6>
+                </div>
+                <div class="card-body">
+                    <div id="seo-preview">
+                        <!-- SEO preview content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OG Preview Panel -->
+        <div class="col-12 mb-4 preview-panel d-none" data-preview="og">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h6 class="card-title mb-0"><i class="fab fa-facebook"></i> Open Graph Preview</h6>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="OG networks">
+                        <button type="button" class="btn btn-outline-light active og-network-btn" data-network="facebook" id="og-network-facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-light og-network-btn" data-network="whatsapp" id="og-network-whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-light og-network-btn" data-network="x" id="og-network-x">
+                            <i class="fab fa-x-twitter"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-light og-network-btn" data-network="linkedin" id="og-network-linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="og-preview" class="d-flex justify-content-center">
+                        <!-- OG preview content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Twitter Preview Panel -->
+        <div class="col-12 mb-4 preview-panel d-none" data-preview="twitter">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0"><i class="fab fa-twitter"></i> Twitter Card Preview</h6>
+                </div>
+                <div class="card-body">
+                    <div id="twitter-preview">
+                        <!-- Twitter preview content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @push('scripts')
 <script>
@@ -170,24 +251,36 @@
         const twitterToggle = document.getElementById('twitter_enabled_toggle');
         const twitterDiv = document.getElementById('twitter_enabled_div');
 
+        // Preview functionality
+        const previewBtn = document.getElementById('preview-btn');
+        const previewSection = document.getElementById('preview-section');
+        const previewTabSeo = document.getElementById('preview-tab-seo');
+        const previewTabOg = document.getElementById('preview-tab-og');
+        const previewTabTwitter = document.getElementById('preview-tab-twitter');
+        const previewPanels = document.querySelectorAll('.preview-panel');
+        const ogNetworkButtons = document.querySelectorAll('.og-network-btn');
+        let activeOgNetwork = 'facebook';
+
         // Function to toggle OG section
         function toggleOgSection() {
             const isChecked = ogToggle.checked;
             ogDiv.style.display = isChecked ? 'block' : 'none';
+            previewTabOg.style.display = isChecked ? 'inline-block' : 'none';
 
-            // Clear inputs when hiding
-            if (!isChecked) {
-                const inputs = ogDiv.querySelectorAll('input, textarea');
-                inputs.forEach(input => {
-                    input.value = '';
-                });
-            }
+            // // Clear inputs when hiding
+            // if (!isChecked) {
+            //     const inputs = ogDiv.querySelectorAll('input, textarea');
+            //     inputs.forEach(input => {
+            //         input.value = '';
+            //     });
+            // }
         }
 
         // Function to toggle Twitter section
         function toggleTwitterSection() {
             const isChecked = twitterToggle.checked;
             twitterDiv.style.display = isChecked ? 'block' : 'none';
+            previewTabTwitter.style.display = isChecked ? 'inline-block' : 'none';
 
             // Clear inputs when hiding
             if (!isChecked) {
@@ -209,6 +302,181 @@
         // Add event listeners
         ogToggle.addEventListener('change', toggleOgSection);
         twitterToggle.addEventListener('change', toggleTwitterSection);
+
+        // Character limits
+        const limits = {
+            title: 60,
+            description: 160,
+            og_title: 90,
+            og_description: 200,
+            twitter_title: 70,
+            twitter_description: 200
+        };
+
+        // Function to validate field
+        function validateField(fieldId, limit) {
+            const field = document.getElementById(fieldId);
+            if (!field) return true;
+            const value = field.value;
+            const length = value.length;
+            const small = field.parentNode.querySelector('.form-text');
+
+            // Remove existing validation classes
+            field.classList.remove('is-valid', 'is-invalid');
+
+            if (length <= limit) {
+                field.classList.add('is-valid');
+                if (small) {
+                    small.innerHTML = `<span class="text-success">${length}/${limit} characters (Good!)</span>`;
+                }
+                return true;
+            } else {
+                field.classList.add('is-invalid');
+                const over = length - limit;
+                if (small) {
+                    small.innerHTML = `<span class="text-danger">${length}/${limit} characters (${over} over limit)</span>`;
+                }
+                return false;
+            }
+        }
+
+        // Function to activate preview panel
+        function showPreviewPanel(type) {
+            previewPanels.forEach(panel => {
+                panel.classList.toggle('d-none', panel.dataset.preview !== type);
+            });
+            previewTabSeo.classList.toggle('active', type === 'seo');
+            previewTabOg.classList.toggle('active', type === 'og');
+            previewTabTwitter.classList.toggle('active', type === 'twitter');
+        }
+
+        // Function to generate SEO preview
+        function generateSEOPreview() {
+            const title = document.getElementById('title').value || 'Your Page Title';
+            const description = document.getElementById('description').value || 'Your page description will appear here...';
+            const url = window.location.origin + '/' + (document.getElementById('page_slug').value || 'your-page');
+
+            return `
+                <div class="seo-preview">
+                    <div class="seo-title" style="color: #1a0dab; font-size: 18px; font-weight: 400; line-height: 1.3; margin-bottom: 4px; text-decoration: none;">
+                        ${title.length > 60 ? title.substring(0, 60) + '...' : title}
+                    </div>
+                    <div class="seo-url" style="color: #006621; font-size: 14px; line-height: 1.4; margin-bottom: 2px;">
+                        ${url}
+                    </div>
+                    <div class="seo-description" style="color: #545454; font-size: 14px; line-height: 1.4;">
+                        ${description.length > 160 ? description.substring(0, 160) + '...' : description}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to generate OG preview
+        function generateOGPreview() {
+            const title = document.getElementById('og_title').value || 'Your Open Graph Title';
+            const description = document.getElementById('og_description').value || 'Your open graph description will appear here...';
+            const image = document.getElementById('og_image').value;
+
+            return `
+                <div class="og-preview" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; max-width: 500px;">
+                    ${image ? `<img src="${image}" alt="OG Image" style="width: 100%; height: 200px; object-fit: cover;">` :
+                             `<div style="width: 100%; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>`}
+                    <div style="padding: 12px;">
+                        <div style="font-weight: 600; font-size: 14px; color: #333; margin-bottom: 4px;">
+                            ${title.length > 90 ? title.substring(0, 90) + '...' : title}
+                        </div>
+                        <div style="font-size: 12px; color: #666; line-height: 1.4;">
+                            ${description.length > 200 ? description.substring(0, 200) + '...' : description}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to generate Twitter preview
+        function generateTwitterPreview() {
+            const title = document.getElementById('twitter_title').value || 'Your Twitter Card Title';
+            const description = document.getElementById('twitter_description').value || 'Your twitter card description will appear here...';
+            const image = document.getElementById('twitter_image').value;
+
+            return `
+                <div class="twitter-preview" style="border: 1px solid #ddd; border-radius: 12px; overflow: hidden; max-width: 500px; background: #fff;">
+                    <div style="padding: 12px;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 15px; color: #14171a; line-height: 1.3; margin-bottom: 4px;">
+                                    ${title.length > 70 ? title.substring(0, 70) + '...' : title}
+                                </div>
+                                <div style="font-size: 13px; color: #657786; line-height: 1.4;">
+                                    ${description.length > 200 ? description.substring(0, 200) + '...' : description}
+                                </div>
+                            </div>
+                            ${image ? `<img src="${image}" alt="Twitter Image" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover;">` :
+                                     `<div style="width: 80px; height: 80px; border-radius: 12px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 10px;">No Image</div>`}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Preview button click handler
+        previewBtn.addEventListener('click', function() {
+            // Validate all fields
+            validateField('title', limits.title);
+            validateField('description', limits.description);
+            validateField('og_title', limits.og_title);
+            validateField('og_description', limits.og_description);
+            validateField('twitter_title', limits.twitter_title);
+            validateField('twitter_description', limits.twitter_description);
+
+            // Generate previews
+            document.getElementById('seo-preview').innerHTML = generateSEOPreview();
+            document.getElementById('og-preview').innerHTML = generateOGPreview();
+            document.getElementById('twitter-preview').innerHTML = generateTwitterPreview();
+
+            // Show preview section and default to SEO preview
+            previewSection.style.display = 'block';
+            showPreviewPanel('seo');
+
+            // Scroll to preview section
+            setTimeout(() => {
+                previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+
+            // Change button text temporarily
+            const originalText = previewBtn.innerHTML;
+            previewBtn.innerHTML = '<i class="fas fa-check"></i> Preview Updated!';
+            previewBtn.classList.remove('btn-info');
+            previewBtn.classList.add('btn-success');
+
+            setTimeout(() => {
+                previewBtn.innerHTML = originalText;
+                previewBtn.classList.remove('btn-success');
+                previewBtn.classList.add('btn-info');
+            }, 2000);
+        });
+
+        previewTabSeo.addEventListener('click', function() {
+            showPreviewPanel('seo');
+        });
+
+        previewTabOg.addEventListener('click', function() {
+            showPreviewPanel('og');
+        });
+
+        previewTabTwitter.addEventListener('click', function() {
+            showPreviewPanel('twitter');
+        });
+
+        // Real-time validation on input
+        Object.keys(limits).forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', () => {
+                    validateField(fieldId, limits[fieldId]);
+                });
+            }
+        });
     });
 </script>
 @endpush

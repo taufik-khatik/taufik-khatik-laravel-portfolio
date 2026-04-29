@@ -80,14 +80,14 @@ class SeoSettingController extends Controller
             'keywords' => $request->keywords,
 
             'og_enabled' => $request->og_enabled ? true : false,
-            'og_title' => $request->og_title,
-            'og_description' => $request->og_description,
-            'og_image' => $request->og_image,
+            'og_title' => $request->og_enabled ? $request->og_title : null,
+            'og_description' => $request->og_enabled ? $request->og_description : null,
+            'og_image' => $request->og_enabled ? $request->og_image : null,
 
             'twitter_enabled' => $request->twitter_enabled ? true : false,
-            'twitter_title' => $request->twitter_title,
-            'twitter_description' => $request->twitter_description,
-            'twitter_image' => $request->twitter_image,
+            'twitter_title' => $request->twitter_enabled ? $request->twitter_title : null,
+            'twitter_description' => $request->twitter_enabled ? $request->twitter_description : null,
+            'twitter_image' => $request->twitter_enabled ? $request->twitter_image : null,
 
             'canonical_url' => $request->canonical_url,
             'robots' => $request->robots
@@ -120,6 +120,7 @@ class SeoSettingController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        dd($request->all());
         $request->validate([
             'page_slug' => ['required', 'max:200', 'unique:seo_settings,page_slug,' . $id],
 
