@@ -10,6 +10,8 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+
+    {{-- Page Title --}}
     <title>
         @if($seo?->title)
             {{ $seo->title }}
@@ -18,38 +20,46 @@
         @endif
     </title>
 
-    <!-- SEO Meta Tags -->
+    {{-- SEO Meta Tags --}}
     <meta name="description" content="{{ @$seo?->description }}">
     <meta name="keywords" content="{{ @$seo?->keywords }}">
     <meta name="author" content="Taufik Khatik">
 
-    <!-- Open Graph (OG) Tags -->
+    {{-- Robots --}}
+    <meta name="robots" content="{{ $seo?->robots ?? 'index,follow' }}">
+
+    {{-- Canonical URL --}}
+    <link rel="canonical" href="{{ $seo?->canonical_url ?? url()->current() }}">
+
+    {{-- Open Graph (OG) Tags - Social Sharing (Facebook, LinkedIn) --}}
     @if($seo?->og_enabled)
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="{{ $seo?->og_title }}">
-    <meta property="og:description" content="{{ $seo?->og_description }}">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:image" content="{{ asset($seo?->og_image) }}">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{{ $seo?->og_title ?: $seo?->title }}">
+        <meta property="og:description" content="{{ $seo?->og_description ?: $seo?->description }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+
+        @if(!empty($seo?->og_image))
+            <meta property="og:image" content="{{ asset($seo->og_image) }}">
+        @endif
     @endif
 
-    <!-- Twitter Card -->
+    {{-- Twitter Card --}}
     @if($seo?->twitter_enabled)
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $seo?->twitter_title }}">
-    <meta name="twitter:description" content="{{ $seo?->twitter_description }}">
-    <meta name="twitter:image" content="{{ asset($seo?->twitter_image) }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $seo?->twitter_title ?: $seo?->title }}">
+        <meta name="twitter:description" content="{{ $seo?->twitter_description ?: $seo?->description }}">
+
+        @if(!empty($seo?->twitter_image))
+            <meta name="twitter:image" content="{{ asset($seo->twitter_image) }}">
+        @endif
     @endif
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ $seo?->canonical_url }}">
+    {{-- Favicon --}}
+    @if(!empty($generalSetting?->favicon))
+        <link rel="icon" href="{{ asset($generalSetting->favicon) }}" type="image/png">
+    @endif
 
-    <!-- Robots -->
-    <meta name="robots" content="{{ $seo?->robots ?? 'noindex,nofollow' }}">
-
-    <!-- Favicon -->
-    <link rel="shortcut icon" type="image/ico" href="{{asset($generalSetting?->favicon)}}"/>
-
-    <!-- Include CSS Stylesheet -->
+    {{-- Include CSS Stylesheet --}}
     @include('frontend.layouts.inc.style')
 </head>
 
@@ -58,7 +68,7 @@
         <img src="{{ asset('frontend/assets/images/preloader.gif') }}" alt="">
     </div>
 
-    <!-- include Navbar -->
+    {{-- Include Navbar --}}
     @if (Request::is('/'))
         <nav class="navbar navbar-expand-lg main_menu" id="main_menu_area">
             <div class="container">
@@ -115,11 +125,11 @@
 
         @yield('content')
 
-        <!-- Include Footer -->
+        {{-- Include Footer --}}
         @include('frontend.layouts.inc.footer')
     </div>
 
-    <!-- Include JS script -->
+    {{-- Include JS script --}}
     @include('frontend.layouts.inc.script')
 </body>
 

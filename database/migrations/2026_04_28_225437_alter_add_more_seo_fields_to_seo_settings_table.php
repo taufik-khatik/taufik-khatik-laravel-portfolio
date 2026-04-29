@@ -41,6 +41,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('seo_settings', function (Blueprint $table) {
+            // always drop unique first to avoid SQL errors
+            if (Schema::hasColumn('seo_settings', 'page_slug')) {
+                $table->dropUnique(['page_slug']);
+            }
+
             $table->dropColumn([
                 'page_slug',
                 'og_enabled', 'og_title', 'og_description', 'og_image',

@@ -41,12 +41,12 @@ class SeoSettingController extends Controller
             'og_enabled' => ['nullable', 'in:on,off'],
             'og_title' => ['nullable', 'required_if:og_enabled,on', 'max:200'],
             'og_description' => ['nullable', 'required_if:og_enabled,on', 'max:500'],
-            'og_image' => ['nullable', 'required_if:og_enabled,on', 'url'],
+            'og_image' => ['nullable', 'url'],
 
             'twitter_enabled' => ['nullable', 'in:on,off'],
             'twitter_title' => ['nullable', 'required_if:twitter_enabled,on', 'max:200'],
             'twitter_description' => ['nullable', 'required_if:twitter_enabled,on', 'max:500'],
-            'twitter_image' => ['nullable', 'required_if:twitter_enabled,on', 'url'],
+            'twitter_image' => ['nullable', 'url'],
 
             'canonical_url' => ['nullable', 'url'],
             'robots' => ['required', 'max:50', 'regex:/^(index|noindex),(follow|nofollow)$/'],
@@ -130,12 +130,12 @@ class SeoSettingController extends Controller
             'og_enabled' => ['nullable', 'in:on,off'],
             'og_title' => ['nullable', 'required_if:og_enabled,on', 'max:200'],
             'og_description' => ['nullable', 'required_if:og_enabled,on', 'max:500'],
-            'og_image' => ['nullable', 'required_if:og_enabled,on', 'url'],
+            'og_image' => ['nullable', 'url'],
 
             'twitter_enabled' => ['nullable', 'in:on,off'],
             'twitter_title' => ['nullable', 'required_if:twitter_enabled,on', 'max:200'],
             'twitter_description' => ['nullable', 'required_if:twitter_enabled,on', 'max:500'],
-            'twitter_image' => ['nullable', 'required_if:twitter_enabled,on', 'url'],
+            'twitter_image' => ['nullable', 'url'],
 
             'canonical_url' => ['nullable', 'url'],
             'robots' => ['required', 'max:50', 'regex:/^(index|noindex),(follow|nofollow)$/'],
