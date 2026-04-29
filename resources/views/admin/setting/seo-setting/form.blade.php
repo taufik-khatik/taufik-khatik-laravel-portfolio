@@ -29,7 +29,8 @@
             <label for="title" class="col-form-label text-md-right col-12 col-md-3">SEO Title<span class="text-danger">*</span></label>
             <div class="col-12 col-md-7">
                 <input id="title" type="text" name="title" class="form-control" value="{{ $seo->title ?? old('title') }}">
-                <small class="form-text text-muted">Keep this under 60 characters for best results.</small>
+                <small class="form-text text-muted">Keep this <code>between 30-60 characters</code> for best results.</small>
+
             </div>
         </div>
 
@@ -37,7 +38,8 @@
             <label for="description" class="col-form-label text-md-right col-12 col-md-3">SEO Description<span class="text-danger">*</span></label>
             <div class="col-12 col-md-7">
                 <textarea id="description" name="description" class="form-control" style="height: 100px">{{ $seo->description ?? old('description') }}</textarea>
-                <small class="form-text text-muted">Keep this under 160 characters and include keywords for best results.</small>
+                <small class="form-text text-muted">Keep this <code>between 70-155 characters</code> for best results.</small>
+
             </div>
         </div>
 
@@ -69,7 +71,8 @@
             <label for="og_title" class="col-form-label text-md-right col-12 col-md-3">OG Title<span class="text-danger">*</span></label>
             <div class="col-12 col-md-7">
                 <input id="og_title" type="text" name="og_title" class="form-control" value="{{ $seo->og_title ?? old('og_title') }}">
-                <small class="form-text text-muted">Keep this under 90 characters for best results.</small>
+                <small class="form-text text-muted">Keep this <code>between 40-90 characters</code> for best results.</small>
+
             </div>
         </div>
 
@@ -77,8 +80,9 @@
             <label for="og_description" class="col-form-label text-md-right col-12 col-md-3">OG Description<span class="text-danger">*</span></label>
             <div class="col-12 col-md-7">
                 <textarea id="og_description" name="og_description" class="form-control" style="height: 100px">{{ $seo->og_description ?? old('og_description') }}</textarea>
-                <small class="form-text text-muted">Keep this under 200 characters for best results.</small>
+                <small class="form-text text-muted">Keep this <code>between 60-200 characters</code> for best results (first 110 are key).</small>
             </div>
+
         </div>
 
         <div class="form-group row mb-0">
@@ -109,7 +113,8 @@
             <label for="twitter_title" class="col-form-label text-md-right col-12 col-md-3">Twitter Title<span class="text-danger">*</span></label>
             <div class="col-12 col-md-7">
                 <input id="twitter_title" type="text" name="twitter_title" class="form-control" value="{{ $seo->twitter_title ?? old('twitter_title') }}">
-                <small class="form-text text-muted">Keep this under 70 characters for best results.</small>
+                <small class="form-text text-muted">Keep this <code>between 35-70 characters</code> for best results.</small>
+
             </div>
         </div>
 
@@ -117,8 +122,9 @@
             <label for="twitter_description" class="col-form-label text-md-right col-12 col-md-3">Twitter Description<span class="text-danger">*</span></label>
             <div class="col-12 col-md-7">
                 <textarea id="twitter_description" name="twitter_description" class="form-control" style="height: 100px">{{ $seo->twitter_description ?? old('twitter_description') }}</textarea>
-                <small class="form-text text-muted">Keep this under 200 characters for best results.</small>
+                <small class="form-text text-muted">Keep this <code>between 50-200 characters</code> for best results.</small>
             </div>
+
         </div>
 
         <div class="form-group row mb-0">
@@ -208,7 +214,7 @@
                             <i class="fab fa-whatsapp"></i>
                         </button>
                         <button type="button" class="btn btn-outline-light og-network-btn" data-network="x" id="og-network-x">
-                            <i class="fab fa-x-twitter"></i>
+                            <i class="fab fa-x-twitter">X</i>
                         </button>
                         <button type="button" class="btn btn-outline-light og-network-btn" data-network="linkedin" id="og-network-linkedin">
                             <i class="fab fa-linkedin-in"></i>
@@ -282,13 +288,13 @@
             twitterDiv.style.display = isChecked ? 'block' : 'none';
             previewTabTwitter.style.display = isChecked ? 'inline-block' : 'none';
 
-            // Clear inputs when hiding
-            if (!isChecked) {
-                const inputs = twitterDiv.querySelectorAll('input, textarea');
-                inputs.forEach(input => {
-                    input.value = '';
-                });
-            }
+            // // Clear inputs when hiding
+            // if (!isChecked) {
+            //     const inputs = twitterDiv.querySelectorAll('input, textarea');
+            //     inputs.forEach(input => {
+            //         input.value = '';
+            //     });
+            // }
         }
 
         // Set initial states
@@ -303,14 +309,14 @@
         ogToggle.addEventListener('change', toggleOgSection);
         twitterToggle.addEventListener('change', toggleTwitterSection);
 
-        // Character limits
+        // Character limits with min and max
         const limits = {
-            title: 60,
-            description: 160,
-            og_title: 90,
-            og_description: 200,
-            twitter_title: 70,
-            twitter_description: 200
+            title: { min: 30, max: 60 },
+            description: { min: 70, max: 155 },
+            og_title: { min: 40, max: 90 },
+            og_description: { min: 60, max: 200 },
+            twitter_title: { min: 35, max: 70 },
+            twitter_description: { min: 50, max: 200 }
         };
 
         // Function to validate field
@@ -320,21 +326,30 @@
             const value = field.value;
             const length = value.length;
             const small = field.parentNode.querySelector('.form-text');
+            const min = limit.min;
+            const max = limit.max;
 
             // Remove existing validation classes
             field.classList.remove('is-valid', 'is-invalid');
 
-            if (length <= limit) {
+            if (length >= min && length <= max) {
                 field.classList.add('is-valid');
                 if (small) {
-                    small.innerHTML = `<span class="text-success">${length}/${limit} characters (Good!)</span>`;
+                    small.innerHTML = `<span class="text-success">${length}/${max} characters (Good!)</span>`;
                 }
                 return true;
             } else {
                 field.classList.add('is-invalid');
-                const over = length - limit;
-                if (small) {
-                    small.innerHTML = `<span class="text-danger">${length}/${limit} characters (${over} over limit)</span>`;
+                if (length > max) {
+                    const over = length - max;
+                    if (small) {
+                        small.innerHTML = `<span class="text-danger">${length}/${max} characters (${over} over limit)</span>`;
+                    }
+                } else {
+                    const under = min - length;
+                    if (small) {
+                        small.innerHTML = `<span class="text-danger">${length}/${max} characters (${under} under minimum)</span>`;
+                    }
                 }
                 return false;
             }
@@ -365,28 +380,64 @@
                         ${url}
                     </div>
                     <div class="seo-description" style="color: #545454; font-size: 14px; line-height: 1.4;">
-                        ${description.length > 160 ? description.substring(0, 160) + '...' : description}
+                        ${description.length > 155 ? description.substring(0, 155) + '...' : description}
                     </div>
+
                 </div>
             `;
         }
 
         // Function to generate OG preview
-        function generateOGPreview() {
+        function generateOGPreview(network = 'facebook') {
             const title = document.getElementById('og_title').value || 'Your Open Graph Title';
             const description = document.getElementById('og_description').value || 'Your open graph description will appear here...';
             const image = document.getElementById('og_image').value;
+            const url = window.location.origin + '/' + (document.getElementById('page_slug').value || 'your-page');
+            const smallDescription = description.length > 110 ? description.substring(0, 110) + '...' : description;
+
+            const imageBlock = image
+                ? `<img src="${image}" alt="OG Image" style="width: 100%; height: 200px; object-fit: cover;">`
+                : `<div style="width: 100%; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>`;
+
+            let networkHeader = '<div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1877F2;"><i class="fab fa-facebook-f"></i> Facebook</div>';
+            let cardBg = '#fff';
+            let titleColor = '#111';
+            let descriptionColor = '#555';
+            let urlColor = '#006621';
+            let headerBg = '#f7f7f7';
+
+            if (network === 'whatsapp') {
+                networkHeader = '<div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #25D366;"><i class="fab fa-whatsapp"></i> WhatsApp</div>';
+                cardBg = '#f8fff4';
+                descriptionColor = '#2f4f2f';
+                urlColor = '#25D366';
+            } else if (network === 'x') {
+                networkHeader = '<div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #1DA1F2;"><i class="fab fa-x-twitter"></i> X</div>';
+                cardBg = '#15202b';
+                titleColor = '#fff';
+                descriptionColor = '#8899a6';
+                urlColor = '#8899a6';
+                headerBg = '#1b2836';
+            } else if (network === 'linkedin') {
+                networkHeader = '<div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #0A66C2;"><i class="fab fa-linkedin-in"></i> LinkedIn</div>';
+                cardBg = '#eef3fb';
+                descriptionColor = '#172b4d';
+                urlColor = '#0A66C2';
+            }
 
             return `
-                <div class="og-preview" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; max-width: 500px;">
-                    ${image ? `<img src="${image}" alt="OG Image" style="width: 100%; height: 200px; object-fit: cover;">` :
-                             `<div style="width: 100%; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>`}
-                    <div style="padding: 12px;">
-                        <div style="font-weight: 600; font-size: 14px; color: #333; margin-bottom: 4px;">
+                <div class="og-preview" style="border: 1px solid #ddd; border-radius: 12px; overflow: hidden; max-width: 520px; background: ${cardBg};">
+                    <div style="padding: 14px; background: ${headerBg};">${networkHeader}</div>
+                    ${imageBlock}
+                    <div style="padding: 14px;">
+                        <div style="font-weight: 700; font-size: 16px; color: ${titleColor}; margin-bottom: 6px;">
                             ${title.length > 90 ? title.substring(0, 90) + '...' : title}
                         </div>
-                        <div style="font-size: 12px; color: #666; line-height: 1.4;">
-                            ${description.length > 200 ? description.substring(0, 200) + '...' : description}
+                        <div style="font-size: 14px; color: ${descriptionColor}; line-height: 1.5; margin-bottom: 8px;">
+                            ${smallDescription}
+                        </div>
+                        <div style="font-size: 13px; color: ${urlColor};">
+                            ${url}
                         </div>
                     </div>
                 </div>
@@ -431,7 +482,7 @@
 
             // Generate previews
             document.getElementById('seo-preview').innerHTML = generateSEOPreview();
-            document.getElementById('og-preview').innerHTML = generateOGPreview();
+            document.getElementById('og-preview').innerHTML = generateOGPreview(activeOgNetwork);
             document.getElementById('twitter-preview').innerHTML = generateTwitterPreview();
 
             // Show preview section and default to SEO preview
@@ -457,15 +508,27 @@
         });
 
         previewTabSeo.addEventListener('click', function() {
+            document.getElementById('seo-preview').innerHTML = generateSEOPreview();
             showPreviewPanel('seo');
         });
 
         previewTabOg.addEventListener('click', function() {
+            document.getElementById('og-preview').innerHTML = generateOGPreview(activeOgNetwork);
             showPreviewPanel('og');
         });
 
         previewTabTwitter.addEventListener('click', function() {
+            document.getElementById('twitter-preview').innerHTML = generateTwitterPreview();
             showPreviewPanel('twitter');
+        });
+
+        ogNetworkButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                ogNetworkButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                activeOgNetwork = this.dataset.network;
+                document.getElementById('og-preview').innerHTML = generateOGPreview(activeOgNetwork);
+            });
         });
 
         // Real-time validation on input
